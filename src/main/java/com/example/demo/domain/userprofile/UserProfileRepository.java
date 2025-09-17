@@ -1,0 +1,41 @@
+package com.example.demo.domain.userprofile;
+
+import com.example.demo.domain.user.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> {
+
+    Optional<UserProfile> findByUser(User user);
+
+    Optional<UserProfile> findByUserId(UUID userId);
+
+    boolean existsByUserId(UUID userId);
+
+    // UC4: Admin search/filter with pagination
+    @Query("SELECT up FROM UserProfile up WHERE " +
+            "(:address IS NULL OR LOWER(up.address) LIKE LOWER(CONCAT('%', :address, '%'))) AND " +
+            "(:minAge IS NULL OR up.age >= :minAge) AND " +
+            "(:maxAge IS NULL OR up.age <= :maxAge)")
+    Page<UserProfile> findProfilesWithFilters(
+            @Param("address") String address,
+            @Param("minAge") Integer minAge,
+            @Param("maxAge") Integer maxAge,
+            Pageable pageable
+    );
+
+    @Query("SELECT up FROM UserProfile up WHERE " +
+            "LOWER(up.user.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(up.user.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(up.user.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(up.address) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    Page<UserProfile> searchProfiles(@Param("searchTerm") String searchTerm, Pageable pageable);
+}
