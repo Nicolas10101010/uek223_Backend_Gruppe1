@@ -1,7 +1,7 @@
 # Set up the build environment using the Gradle image with JDK 18
 FROM gradle:jdk18 AS build
 # Copy the project files to the /home/gradle/src directory
-COPY --chown=gradle:gradle . /home/gradle/src
+COPY --chown=gradle:gradle nypag-spring_backend-52c5f093d1c5 /home/gradle/src
 # Set the working directory to /home/gradle/src
 WORKDIR /home/gradle/src
 # Build the Spring Boot application using Gradle
