@@ -1,8 +1,8 @@
 package com.example.demo.domain.userprofile;
 
 import com.example.demo.domain.user.User;
+import com.example.demo.domain.userprofile.dto.UserProfileCreateUpdateDTO;
 import com.example.demo.domain.userprofile.dto.UserProfileDTO;
-import com.example.demo.domain.userprofile.dto.UserProfileRegisterDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,14 +23,17 @@ import java.util.UUID;
 @SecurityRequirement(name = "bearerAuth")
 public class UserProfileController {
 
-    @Autowired
-    private UserProfileService userProfileService;
+    private final UserProfileService userProfileService;
+
+    public UserProfileController(@Autowired UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
+    }
 
     // UC1: Create own profile
     @PostMapping
     @Operation(summary = "Create user profile", description = "User creates their own profile")
     public ResponseEntity<UserProfileDTO> createProfile(
-            @Valid @RequestBody UserProfileRegisterDTO registerDTO,
+            @Valid @RequestBody UserProfileCreateUpdateDTO registerDTO,
             @AuthenticationPrincipal User currentUser) {
         UserProfileDTO createdProfile = userProfileService.createProfile(registerDTO, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProfile);
@@ -48,7 +51,7 @@ public class UserProfileController {
     @PutMapping("/me")
     @Operation(summary = "Update own profile", description = "User updates their own profile")
     public ResponseEntity<UserProfileDTO> updateOwnProfile(
-            @Valid @RequestBody UserProfileDTO profileDTO,
+            @Valid @RequestBody UserProfileCreateUpdateDTO profileDTO,
             @AuthenticationPrincipal User currentUser) {
         UserProfileDTO updatedProfile = userProfileService.updateOwnProfile(profileDTO, currentUser);
         return ResponseEntity.ok(updatedProfile);
@@ -77,7 +80,7 @@ public class UserProfileController {
     @Operation(summary = "Update profile by ID", description = "Admin or owner updates profile")
     public ResponseEntity<UserProfileDTO> updateProfile(
             @PathVariable UUID profileId,
-            @Valid @RequestBody UserProfileDTO profileDTO,
+            @Valid @RequestBody UserProfileCreateUpdateDTO profileDTO,
             @AuthenticationPrincipal User currentUser) {
         UserProfileDTO updatedProfile = userProfileService.updateProfile(profileId, profileDTO, currentUser);
         return ResponseEntity.ok(updatedProfile);

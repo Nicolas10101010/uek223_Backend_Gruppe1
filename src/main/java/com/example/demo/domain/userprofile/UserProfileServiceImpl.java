@@ -1,9 +1,9 @@
 package com.example.demo.domain.userprofile;
 
 import com.example.demo.domain.user.User;
+import com.example.demo.domain.userprofile.dto.UserProfileCreateUpdateDTO;
 import com.example.demo.domain.userprofile.dto.UserProfileDTO;
 import com.example.demo.domain.userprofile.dto.UserProfileMapper;
-import com.example.demo.domain.userprofile.dto.UserProfileRegisterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,27 +17,27 @@ import java.util.UUID;
 @Transactional
 public class UserProfileServiceImpl implements UserProfileService {
 
-    @Autowired
-    private UserProfileRepository userProfileRepository;
+    private final UserProfileRepository userProfileRepository;
 
-    @Autowired
-    private UserProfileMapper userProfileMapper;
+    private final UserProfileMapper userProfileMapper;
+
+    public UserProfileServiceImpl(@Autowired UserProfileRepository userProfileRepository,
+                                  @Autowired UserProfileMapper userProfileMapper) {
+        this.userProfileRepository = userProfileRepository;
+        this.userProfileMapper = userProfileMapper;
+    }
 
     // UC1: User creates own profile
     @Override
-    public UserProfileDTO createProfile(UserProfileRegisterDTO registerDTO, User currentUser) {
+    public UserProfileDTO createProfile(UserProfileCreateUpdateDTO registerDTO, User currentUser) {
         // Check if user already has a profile
         if (userProfileRepository.existsByUserId(currentUser.getId())) {
             throw new IllegalStateException("User already has a profile");
         }
 
-        // Create new profile
-        UserProfile profile = new UserProfile();
+        // Create new profile using mapper
+        UserProfile profile = userProfileMapper.toEntity(registerDTO);
         profile.setUser(currentUser);
-        profile.setAddress(registerDTO.address());
-        profile.setBirthdate(registerDTO.birthdate());
-        profile.setProfileImgUrl(registerDTO.profileImgUrl());
-        profile.setAge(registerDTO.age());
 
         UserProfile savedProfile = userProfileRepository.save(profile);
         return userProfileMapper.toDTO(savedProfile);
@@ -53,7 +53,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     // UC2: User updates own profile
     @Override
-    public UserProfileDTO updateOwnProfile(UserProfileDTO profileDTO, User currentUser) {
+    public UserProfileDTO updateOwnProfile(UserProfileCreateUpdateDTO profileDTO, User currentUser) {
         UserProfile existingProfile = userProfileRepository.findByUser(currentUser)
                 .orElseThrow(() -> new RuntimeException("Profile not found for user: " + currentUser.getEmail()));
 
@@ -87,7 +87,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     // UC3: Admin updates any profile
     @Override
-    public UserProfileDTO updateProfile(UUID profileId, UserProfileDTO profileDTO, User currentUser) {
+    public UserProfileDTO updateProfile(UUID profileId, UserProfileCreateUpdateDTO profileDTO, User currentUser) {
         UserProfile existingProfile = userProfileRepository.findById(profileId)
                 .orElseThrow(() -> new RuntimeException("Profile not found with ID: " + profileId));
 
