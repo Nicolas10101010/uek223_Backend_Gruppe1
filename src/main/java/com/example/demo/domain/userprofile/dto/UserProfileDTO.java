@@ -1,42 +1,47 @@
 package com.example.demo.domain.userprofile.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Positive;
+import com.example.demo.core.generic.AbstractDTO;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record UserProfileDTO(
-        UUID id,
+@NoArgsConstructor
+@Getter
+@Setter
+@Accessors(chain = true)
+public class UserProfileDTO extends AbstractDTO {
 
-        @NotBlank(message = "Address is required")
-        String address,
+    private String address;
+    private LocalDate birthdate;
+    private String profileImgUrl;
+    private Integer age;
 
-        @NotNull(message = "Birthdate is required")
-        @Past(message = "Birthdate must be in the past")
-        LocalDate birthdate,
+    private UUID userId;
+    private String userFirstName;
+    private String userLastName;
+    private String userEmail;
 
-        String profileImgUrl,
-
-        @Positive(message = "Age must be positive")
-        Integer age,
-
-        // User information for responses
-        UUID userId,
-        String userFirstName,
-        String userLastName,
-        String userEmail
-) {
-
-    // Constructor for creating profile (without user details and id)
-    public UserProfileDTO(String address, LocalDate birthdate, String profileImgUrl, Integer age) {
-        this(null, address, birthdate, profileImgUrl, age, null, null, null, null);
-    }
-
-    // Constructor for updating profile (with id but without user details)
-    public UserProfileDTO(UUID id, String address, LocalDate birthdate, String profileImgUrl, Integer age) {
-        this(id, address, birthdate, profileImgUrl, age, null, null, null, null);
+    public UserProfileDTO(UUID id,
+                          String address,
+                          LocalDate birthdate,
+                          String profileImgUrl,
+                          Integer age,
+                          UUID userId,
+                          String userFirstName,
+                          String userLastName,
+                          String userEmail) {
+        super(id);
+        this.address = address;
+        this.birthdate = birthdate;
+        this.profileImgUrl = profileImgUrl;
+        this.age = age;
+        this.userId = userId;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userEmail = userEmail;
     }
 }
