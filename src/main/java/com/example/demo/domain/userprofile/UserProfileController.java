@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/profiles")
+@RequestMapping("/profiles")
 @Tag(name = "User Profile", description = "User Profile management")
 @SecurityRequirement(name = "bearerAuth")
 public class UserProfileController {
@@ -30,7 +30,7 @@ public class UserProfileController {
     }
 
     // UC1: Create own profile
-    @PostMapping
+    @PostMapping("/me")
     @Operation(summary = "Create user profile", description = "User creates their own profile")
     public ResponseEntity<UserProfileDTO> createProfile(
             @Valid @RequestBody UserProfileCreateUpdateDTO registerDTO,
