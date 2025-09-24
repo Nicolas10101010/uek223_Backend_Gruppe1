@@ -17,8 +17,6 @@ public class UserProfileCreateUpdateDTO {
     private String address;
 
     @NotNull(message = "Birthdate is required")
-    @Past(message = "Birthdate must be in the past")
-    @JsonFormat(pattern = "yyyy-MM-dd") // erwartet z.B. "2007-09-04"
     private LocalDate birthdate;
 
     @Size(max = 1024)

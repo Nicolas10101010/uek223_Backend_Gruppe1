@@ -31,7 +31,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC1: User creates own profile
+    // UC1: User creates own profile
     // -------------------------------
     @Override
     public UserProfileDTO createProfile(UserProfileCreateUpdateDTO dto, User currentUser) {
@@ -51,7 +51,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC2: Get own profile
+    // UC2: Get own profile
     // -------------------------------
     @Override
     public UserProfileDTO getOwnProfile(User currentUser) {
@@ -68,7 +68,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC2: Update own profile
+    // UC2: Update own profile
     // -------------------------------
     @Override
     public UserProfileDTO updateOwnProfile(UserProfileCreateUpdateDTO dto, User currentUser) {
@@ -90,7 +90,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC2: Delete own profile
+    // UC2: Delete own profile
     // -------------------------------
     @Override
     public void deleteOwnProfile(User currentUser) {
@@ -107,7 +107,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC3: Admin get profile by ID
+    // UC3: Admin get profile by ID
     // -------------------------------
     @Override
     public UserProfileDTO getProfileById(UUID profileId, User currentUser) {
@@ -129,7 +129,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC4: Admin update profile
+    // UC4: Admin update profile
     // -------------------------------
     @Override
     public UserProfileDTO updateProfile(UUID profileId, UserProfileCreateUpdateDTO dto, User currentUser) {
@@ -153,7 +153,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC4: Admin delete profile
+    // UC4: Admin delete profile
     // -------------------------------
     @Override
     public void deleteProfile(UUID profileId, User currentUser) {
@@ -172,7 +172,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC5: Admin search/filter profiles
+    // UC5: Admin search/filter profiles
     // -------------------------------
     @Override
     public Page<UserProfileDTO> searchProfiles(String searchTerm, String address,
@@ -200,7 +200,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ UC? getAllProfiles (Admin only)
+    // UC? getAllProfiles (Admin only)
     // -------------------------------
     @Override
     public Page<UserProfileDTO> getAllProfiles(Pageable pageable, User currentUser) {
@@ -220,7 +220,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     // -------------------------------
-    // ✅ Helper methods
+    // Helper methods
     // -------------------------------
     @Override
     public boolean existsProfileForUser(User user) {
