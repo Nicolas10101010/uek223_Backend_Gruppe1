@@ -215,7 +215,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private boolean isAdmin(User currentUser) {
         return currentUser.getRoles().stream()
-                .flatMap(role -> role.getAuthorities().stream())
-                .anyMatch(a -> a.getName().equals("ADMIN"));
+                .anyMatch(role -> "ADMIN".equals(role.getName()));
     }
 }
