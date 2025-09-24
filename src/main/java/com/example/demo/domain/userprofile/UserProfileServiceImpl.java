@@ -7,6 +7,7 @@ import com.example.demo.domain.userprofile.dto.UserProfileMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,7 +26,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private final UserProfileMapper userProfileMapper;
 
     @Autowired
-    public UserProfileServiceImpl(UserProfileRepository repo, UserProfileMapper mapper) {
+    public UserProfileServiceImpl(UserProfileRepository repo, @Qualifier("userProfileMapperImpl") UserProfileMapper mapper) {
         this.userProfileRepository = repo;
         this.userProfileMapper = mapper;
     }
