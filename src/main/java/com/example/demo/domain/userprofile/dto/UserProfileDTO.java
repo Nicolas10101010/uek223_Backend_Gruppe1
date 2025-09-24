@@ -1,6 +1,7 @@
 package com.example.demo.domain.userprofile.dto;
 
 import com.example.demo.core.generic.AbstractDTO;
+import com.example.demo.domain.user.dto.UserDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -17,6 +18,8 @@ import java.util.UUID;
 @Accessors(chain = true)
 public class UserProfileDTO extends AbstractDTO {
 
+    private UserDTO user;
+
     @NotBlank(message = "Address is required")
     private String address;
 
@@ -32,36 +35,19 @@ public class UserProfileDTO extends AbstractDTO {
     @Max(value = 150, message = "Age must be <= 150")
     private Integer age;
 
-    private UUID userId;
-    private String userFirstName;
-    private String userLastName;
-    private String userEmail;
-
-    public UserProfileDTO(UUID id,
-                          String address,
-                          LocalDate birthdate,
-                          String profileImgUrl,
-                          Integer age,
-                          UUID userId,
-                          String userFirstName,
-                          String userLastName,
-                          String userEmail) {
-        super(id);
+    public UserProfileDTO(UUID profileId, UserDTO user, String address, LocalDate birthdate, String profileImgUrl, Integer age) {
+        super(profileId);
+        this.user = user;
         this.address = address;
         this.birthdate = birthdate;
         this.profileImgUrl = profileImgUrl;
         this.age = age;
-        this.userId = userId;
-        this.userFirstName = userFirstName;
-        this.userLastName = userLastName;
-        this.userEmail = userEmail;
     }
 
     @NoArgsConstructor
     @Getter
     @Setter
     public static class CreateUpdateDTO {
-
         @NotBlank(message = "Address is required")
         private String address;
 
@@ -70,25 +56,16 @@ public class UserProfileDTO extends AbstractDTO {
         private LocalDate birthdate;
 
         @Size(max = 1024)
-        private String profileImgUrl; // optional
+        private String profileImgUrl;
 
         @NotNull(message = "Age is required")
         @Min(value = 0, message = "Age must be >= 0")
         @Max(value = 150, message = "Age must be <= 150")
         private Integer age;
 
-        public CreateUpdateDTO(String address,
-                               LocalDate birthdate,
-                               String profileImgUrl,
-                               Integer age) {
-            this.address = address;
-            this.birthdate = birthdate;
-            this.profileImgUrl = profileImgUrl;
-            this.age = age;
-        }
-
-        public UserProfileDTO toUserProfileDTO() {
+        public UserProfileDTO toUserProfileDTO(UserDTO userDTO) {
             return new UserProfileDTO()
+                    .setUser(userDTO)
                     .setAddress(this.address)
                     .setBirthdate(this.birthdate)
                     .setProfileImgUrl(this.profileImgUrl)
@@ -96,3 +73,4 @@ public class UserProfileDTO extends AbstractDTO {
         }
     }
 }
+
