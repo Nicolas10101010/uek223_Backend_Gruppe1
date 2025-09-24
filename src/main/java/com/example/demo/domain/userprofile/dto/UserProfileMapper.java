@@ -9,9 +9,10 @@ import org.mapstruct.ReportingPolicy;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserProfileMapper extends AbstractMapper<UserProfile, UserProfileDTO> {
 
+    @Override
     UserProfileDTO toDTO(UserProfile entity);
 
-    UserProfile toEntity(UserProfileCreateUpdateDTO dto);
+    UserProfile toEntity(UserProfileDTO.CreateUpdateDTO dto);
 
-    void updateEntityFromDTO(UserProfileCreateUpdateDTO dto, @MappingTarget UserProfile entity);
+    void updateEntityFromDTO(UserProfileDTO.CreateUpdateDTO dto, @MappingTarget UserProfile entity);
 }
