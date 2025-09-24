@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/profiles")
+@RequestMapping("profiles")
 @Tag(name = "User Profile", description = "User Profile management")
 @SecurityRequirement(name = "bearerAuth")
 public class UserProfileController {
@@ -40,7 +40,7 @@ public class UserProfileController {
             @Valid @RequestBody UserProfileCreateUpdateDTO registerDTO,
             @AuthenticationPrincipal User currentUser) {
 
-        logger.info("UC1-API: POST /api/profiles - User {} creating profile", currentUser.getEmail());
+        logger.info("UC1-API: POST /profiles - User {} creating profile", currentUser.getEmail());
 
         try {
             UserProfileDTO createdProfile = userProfileService.createProfile(registerDTO, currentUser);
@@ -60,7 +60,7 @@ public class UserProfileController {
     @GetMapping("/me")
     @Operation(summary = "Get own profile", description = "User gets their own profile")
     public ResponseEntity<UserProfileDTO> getOwnProfile(@AuthenticationPrincipal User currentUser) {
-        logger.info("UC2-API: GET /api/profiles/me - User {} retrieving own profile", currentUser.getEmail());
+        logger.info("UC2-API: GET profiles/me - User {} retrieving own profile", currentUser.getEmail());
 
         try {
             UserProfileDTO profile = userProfileService.getOwnProfile(currentUser);
