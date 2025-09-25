@@ -9,18 +9,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+/**
+ * UserProfileServiceImpl - Business Logic Implementation für UserProfile
+ *
+ * Use Cases:
+ * UC1: User erstellt eigenes Profil (Adresse, Geburtsdatum, Profilbild-URL und Alter)
+ * UC2: User liest, aktualisiert oder löscht eigenes Profil
+ * UC3: Administrator liest, aktualisiert oder löscht beliebige UserProfile
+ * UC4: Administrator sucht, filtert und sortiert UserProfiles (mit Pagination)
+ * UC5: Zugriffsschutz wird über @PreAuthorize im Controller gewährleistet
+ *
+ * Komponenten:
+ * - Transaktionale Service-Schicht mit @Transactional
+ * - Umfassendes Logging für alle Use Cases
+ * - Partial Updates mit Null-Checks
+ * - MapStruct Mapper für Entity/DTO-Konvertierung
+ * - Reine Business-Logik ohne Security-Checks (diese erfolgen im Controller)
+ */
 @Service
 @Transactional
 public class UserProfileServiceImpl implements UserProfileService {
 
     private static final Logger logger = LogManager.getLogger(UserProfileServiceImpl.class);
-
     private static final String PROFILE_NOT_FOUND = "Profile not found";
 
     private final UserProfileRepository userProfileRepository;
@@ -33,13 +48,12 @@ public class UserProfileServiceImpl implements UserProfileService {
         this.userProfileMapper = mapper;
     }
 
-    // -------------------------------
-    // UC1: User creates own profile
-    // -------------------------------
+    // ---- UC1: User erstellt eigenes Profil ----
     @Override
     public UserProfileDTO createProfile(UserProfileDTO.CreateUpdateDTO dto, User currentUser) {
         logger.info("UC1: User {} is creating a profile with data={}", currentUser.getEmail(), dto);
 
+        // Business Rule: Ein User kann nur ein Profil haben
         if (userProfileRepository.existsByUserId(currentUser.getId())) {
             logger.warn("UC1: Profile creation failed → User {} already has a profile", currentUser.getEmail());
             throw new IllegalStateException("User already has a profile");
@@ -54,9 +68,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         return userProfileMapper.toDTO(saved);
     }
 
-    // -------------------------------
-    // UC2: Get own profile
-    // -------------------------------
+    // ---- UC2: User liest eigenes Profil ----
     @Override
     public UserProfileDTO getOwnProfile(User currentUser) {
         logger.info("UC2: User {} retrieving own profile", currentUser.getEmail());
@@ -70,9 +82,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         return userProfileMapper.toDTO(profile);
     }
 
-    // -------------------------------
-    // UC2: Update own profile
-    // -------------------------------
+    // ---- UC2: User aktualisiert eigenes Profil ----
     @Override
     public UserProfileDTO updateOwnProfile(UserProfileDTO.CreateUpdateDTO dto, User currentUser) {
         logger.info("UC2: User {} updating their profile with data={}", currentUser.getEmail(), dto);
@@ -83,6 +93,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                     return new RuntimeException(PROFILE_NOT_FOUND);
                 });
 
+        // Partial Update: nur nicht-null Werte aktualisieren
         if (dto.getAddress() != null) profile.setAddress(dto.getAddress());
         if (dto.getAge() != null) profile.setAge(dto.getAge());
         if (dto.getBirthdate() != null) profile.setBirthdate(dto.getBirthdate());
@@ -94,9 +105,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         return userProfileMapper.toDTO(updated);
     }
 
-    // -------------------------------
-    // UC2: Delete own profile
-    // -------------------------------
+    // ---- UC2: User löscht eigenes Profil ----
     @Override
     public void deleteOwnProfile(User currentUser) {
         logger.info("UC2: User {} deleting own profile", currentUser.getEmail());
@@ -111,9 +120,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         logger.info("UC2: Profile {} deleted successfully for user {}", profile.getId(), currentUser.getEmail());
     }
 
-    // -------------------------------
-    // UC3: Admin get profile by ID
-    // -------------------------------
+    // ---- UC3: Admin oder Owner liest Profil (Security im Controller) ----
     @Override
     public UserProfileDTO getProfileById(UUID profileId, User currentUser) {
         logger.info("UC3: User {} retrieving profileId={}", currentUser.getEmail(), profileId);
@@ -121,79 +128,85 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findById(profileId)
                 .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
-        if (!isAdminOrOwner(currentUser, profile)) {
-            throw new AccessDeniedException("Access denied");
-        }
-
         return userProfileMapper.toDTO(profile);
     }
 
-    // -------------------------------
-    // UC4: Admin update profile
-    // -------------------------------
+    // ---- UC3: Admin oder Owner aktualisiert Profil (Security im Controller) ----
     @Override
     public UserProfileDTO updateProfile(UUID profileId, UserProfileDTO.CreateUpdateDTO dto, User currentUser) {
-        logger.info("UC4: User {} updating profileId={} with data={}", currentUser.getEmail(), profileId, dto);
+        logger.info("UC3: User {} updating profileId={} with data={}", currentUser.getEmail(), profileId, dto);
 
         UserProfile profile = userProfileRepository.findById(profileId)
                 .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
-        if (!isAdminOrOwner(currentUser, profile)) {
-            throw new AccessDeniedException("Access denied");
-        }
-
+        // Partial Update: nur nicht-null Werte aktualisieren
         if (dto.getAddress() != null) profile.setAddress(dto.getAddress());
         if (dto.getAge() != null) profile.setAge(dto.getAge());
         if (dto.getBirthdate() != null) profile.setBirthdate(dto.getBirthdate());
         if (dto.getProfileImgUrl() != null) profile.setProfileImgUrl(dto.getProfileImgUrl());
 
         UserProfile updated = userProfileRepository.save(profile);
+        logger.info("UC3: Profile {} updated successfully by {}", profileId, currentUser.getEmail());
+
         return userProfileMapper.toDTO(updated);
     }
 
-    // -------------------------------
-    // UC4: Admin delete profile
-    // -------------------------------
+    // ---- UC3: Admin oder Owner löscht Profil (Security im Controller) ----
     @Override
     public void deleteProfile(UUID profileId, User currentUser) {
-        logger.info("UC4: User {} deleting profileId={}", currentUser.getEmail(), profileId);
+        logger.info("UC3: User {} deleting profileId={}", currentUser.getEmail(), profileId);
 
         UserProfile profile = userProfileRepository.findById(profileId)
                 .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
-        if (!isAdminOrOwner(currentUser, profile)) {
-            throw new AccessDeniedException("Access denied");
-        }
-
         userProfileRepository.delete(profile);
+        logger.info("UC3: Profile {} deleted successfully by {}", profileId, currentUser.getEmail());
     }
 
+    // ---- UC4: Admin sucht, filtert und sortiert Profile (Security im Controller) ----
     @Override
     public Page<UserProfileDTO> searchProfiles(String searchTerm, String address,
                                                Integer minAge, Integer maxAge,
                                                Pageable pageable, User currentUser) {
-        logger.info("UC5: User {} searching profiles", currentUser.getEmail());
+        logger.info("UC4: User {} searching profiles with filters: search={}, address={}, minAge={}, maxAge={}",
+                currentUser.getEmail(), searchTerm, address, minAge, maxAge);
 
-        if (!isAdmin(currentUser)) {
-            throw new AccessDeniedException("Admin only");
+        Page<UserProfile> profiles;
+
+        if ((searchTerm != null && !searchTerm.isBlank()) ||
+                (address != null && !address.isBlank()) ||
+                minAge != null || maxAge != null) {
+
+            // Verwende Repository-Methoden je nach verfügbaren Filtern
+            if (searchTerm != null && !searchTerm.isBlank()) {
+                profiles = userProfileRepository.searchProfiles(searchTerm, pageable);
+            } else {
+                profiles = userProfileRepository.findProfilesWithFilters(address, minAge, maxAge, pageable);
+            }
+        } else {
+            profiles = userProfileRepository.findAll(pageable);
         }
 
-        Page<UserProfile> profiles = (searchTerm != null && !searchTerm.isBlank())
-                ? userProfileRepository.searchProfiles(searchTerm, pageable)
-                : userProfileRepository.findProfilesWithFilters(address, minAge, maxAge, pageable);
+        logger.info("UC4: Search completed by {} - Found {} profiles out of {} total",
+                currentUser.getEmail(), profiles.getNumberOfElements(), profiles.getTotalElements());
 
         return profiles.map(userProfileMapper::toDTO);
     }
 
+    // ---- UC4: Admin Liste aller Profile (Security im Controller) ----
     @Override
     public Page<UserProfileDTO> getAllProfiles(Pageable pageable, User currentUser) {
-        if (!isAdmin(currentUser)) {
-            throw new AccessDeniedException("Admin only");
-        }
+        logger.info("UC4: User {} retrieving all profiles", currentUser.getEmail());
 
-        return userProfileRepository.findAll(pageable).map(userProfileMapper::toDTO);
+        Page<UserProfile> profiles = userProfileRepository.findAll(pageable);
+
+        logger.info("UC4: Retrieved {} profiles out of {} total for admin {}",
+                profiles.getNumberOfElements(), profiles.getTotalElements(), currentUser.getEmail());
+
+        return profiles.map(userProfileMapper::toDTO);
     }
 
+    // ---- Helper-Methoden für zusätzliche Business-Logik ----
     @Override
     public boolean existsProfileForUser(User user) {
         return userProfileRepository.existsByUserId(user.getId());
@@ -201,22 +214,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public UserProfileDTO getProfileByUserId(UUID userId, User currentUser) {
+        logger.info("UC3: User {} retrieving profile for userId={}", currentUser.getEmail(), userId);
+
         UserProfile profile = userProfileRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
-        if (!isAdminOrOwner(currentUser, profile)) {
-            throw new AccessDeniedException("Access denied");
-        }
-
         return userProfileMapper.toDTO(profile);
-    }
-
-    private boolean isAdminOrOwner(User currentUser, UserProfile profile) {
-        return isAdmin(currentUser) || profile.getUser().getId().equals(currentUser.getId());
-    }
-
-    private boolean isAdmin(User currentUser) {
-        return currentUser.getRoles().stream()
-                .anyMatch(role -> "ADMIN".equals(role.getName()));
     }
 }

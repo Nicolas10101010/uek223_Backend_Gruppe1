@@ -11,6 +11,14 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * UserProfileRepository - Datenzugriff für UserProfile
+ *
+ * Komponenten:
+ * - Spring Data JPA Repository mit CRUD-Operationen
+ * - Custom JPQL Queries für komplexe Suchfunktionen
+ * - Pagination Support für Admin-Funktionen
+ */
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> {
 
@@ -20,7 +28,11 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> 
 
     boolean existsByUserId(UUID userId);
 
-    // UC4: Admin search/filter with pagination
+    /**
+     * Erweiterte Filtersuche für Admin-Funktionen
+     * Kombiniert mehrere optionale Filter mit AND-Verknüpfung
+     * NULL-Parameter werden ignoriert (dynamische WHERE-Klausel)
+     */
     @Query("SELECT up FROM UserProfile up WHERE " +
             "(:address IS NULL OR LOWER(up.address) LIKE LOWER(CONCAT('%', :address, '%'))) AND " +
             "(:minAge IS NULL OR up.age >= :minAge) AND " +
@@ -32,6 +44,11 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, UUID> 
             Pageable pageable
     );
 
+    /**
+     * Volltext-Suche über User- und Profil-Felder
+     * Durchsucht firstName, lastName, email und address mit OR-Verknüpfung
+     * Case-insensitive durch LOWER()-Funktionen
+     */
     @Query("SELECT up FROM UserProfile up WHERE " +
             "LOWER(up.user.firstName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(up.user.lastName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +

@@ -12,6 +12,15 @@ import lombok.experimental.Accessors;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * UserProfileDTO - Data Transfer Object für UserProfile
+ *
+ * Komponenten:
+ * - Bean Validation für Eingabevalidierung
+ * - Jackson Annotations für JSON-Serialisierung
+ * - Nested CreateUpdateDTO für Create/Update-Operationen
+ * - Fluent API durch Accessors(chain = true)
+ */
 @NoArgsConstructor
 @Getter
 @Setter
@@ -44,6 +53,10 @@ public class UserProfileDTO extends AbstractDTO {
         this.age = age;
     }
 
+    /**
+     * Nested DTO für Create/Update-Operationen
+     * Enthält nur die veränderbaren Felder ohne User-Referenz
+     */
     @NoArgsConstructor
     @Getter
     @Setter
@@ -63,6 +76,10 @@ public class UserProfileDTO extends AbstractDTO {
         @Max(value = 150, message = "Age must be <= 150")
         private Integer age;
 
+        /**
+         * Konvertiert CreateUpdateDTO zu vollständigem UserProfileDTO
+         * Wird hauptsächlich in Tests verwendet
+         */
         public UserProfileDTO toUserProfileDTO(UserDTO userDTO) {
             return new UserProfileDTO()
                     .setUser(userDTO)
@@ -73,4 +90,3 @@ public class UserProfileDTO extends AbstractDTO {
         }
     }
 }
-
