@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.UUID;
 
 /**
@@ -17,9 +18,7 @@ import java.util.UUID;
  *
  * Komponenten:
  * - Bean Validation für Eingabevalidierung
- * - Jackson Annotations für JSON-Serialisierung
- * - Nested CreateUpdateDTO für Create/Update-Operationen
- * - Fluent API durch Accessors(chain = true)
+ * - Custom Validation via @AssertTrue für Altersprüfung
  */
 @NoArgsConstructor
 @Getter
@@ -33,6 +32,7 @@ public class UserProfileDTO extends AbstractDTO {
     private String address;
 
     @NotNull(message = "Birthdate is required")
+    @Past(message = "Birthdate must be in the past")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthdate;
 
@@ -54,8 +54,18 @@ public class UserProfileDTO extends AbstractDTO {
     }
 
     /**
+     * Custom Validierung: Age muss zum Birthdate passen.
+     */
+    @AssertTrue(message = "Age does not match the birthdate")
+    public boolean isAgeConsistent() {
+        if (birthdate == null || age == null) return true; // andere Validatoren kümmern sich um @NotNull
+        int calculated = Period.between(birthdate, LocalDate.now()).getYears();
+        return calculated == age;
+    }
+
+    /**
      * Nested DTO für Create/Update-Operationen
-     * Enthält nur die veränderbaren Felder ohne User-Referenz
+     * Enthält nur veränderbare Felder
      */
     @NoArgsConstructor
     @Getter
@@ -65,6 +75,7 @@ public class UserProfileDTO extends AbstractDTO {
         private String address;
 
         @NotNull(message = "Birthdate is required")
+        @Past(message = "Birthdate must be in the past")
         @JsonFormat(pattern = "yyyy-MM-dd")
         private LocalDate birthdate;
 
@@ -76,10 +87,13 @@ public class UserProfileDTO extends AbstractDTO {
         @Max(value = 150, message = "Age must be <= 150")
         private Integer age;
 
-        /**
-         * Konvertiert CreateUpdateDTO zu vollständigem UserProfileDTO
-         * Wird hauptsächlich in Tests verwendet
-         */
+        @AssertTrue(message = "Age does not match the birthdate")
+        public boolean isAgeConsistent() {
+            if (birthdate == null || age == null) return true;
+            int calculated = Period.between(birthdate, LocalDate.now()).getYears();
+            return calculated == age;
+        }
+
         public UserProfileDTO toUserProfileDTO(UserDTO userDTO) {
             return new UserProfileDTO()
                     .setUser(userDTO)
