@@ -1,0 +1,1517 @@
+{
+	"info": {
+		"_postman_id": "dfc60dcf-788b-4813-8de4-dd2b52661258",
+		"name": "UeK223",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41650190"
+	},
+	"item": [
+		{
+			"name": "üK223",
+			"item": [
+				{
+					"name": "Authentication",
+					"item": [
+						{
+							"name": "Login",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/user/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"user",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Register",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"firstName\": \"{{$randomFirstName}}\",\r\n  \"lastName\": \"{{$randomLastName}}\",\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/user/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"user",
+										"register"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UC1",
+					"item": [
+						{
+							"name": "UC1 - Create Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC1 Create Profile → 201 Created\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"pm.test(\"Response ist JSON\", () => {\r",
+											"    pm.response.to.have.header(\"Content-Type\");\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// === Roles Checks ===\r",
+											"pm.test(\"Roles and Authorities checks\", () => {\r",
+											"    const roles = jsonData.user.roles;\r",
+											"\r",
+											"    roles.forEach(role => {\r",
+											"        pm.expect(role).to.have.property(\"id\");\r",
+											"        pm.expect(role).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"        pm.expect(role).to.have.property(\"authorities\").that.is.an(\"array\");\r",
+											"\r",
+											"        role.authorities.forEach(auth => {\r",
+											"            pm.expect(auth).to.have.property(\"id\");\r",
+											"            pm.expect(auth).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"        });\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9SRUFEX09XTiJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifV0sInN1YiI6ImQ3ZTc4YWJlLTBiOGMtNGNiYS04NzZlLTQ0MTU4MTg1YjQ4MyIsImlhdCI6MTc1ODgwOTQ0MSwiZXhwIjoxNzU4OTA5NDQxLCJpc3MiOiJ1azIyMyJ9.saqDTfnyj-pci8wJLKZWPbQCRvqkcMW6AlsRLVdHuE8KpUo44Z5WtEGFvIQ1qm30",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 45\",\r\n  \"birthdate\": \"1992-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC1 - Fail Doppeltes Profil",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC1 Fail 2nd Profile → 400 oder 409\", function () {\r",
+											"    pm.expect(pm.response.code).to.be.oneOf([400, 409]);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9SRUFEX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNDg1MiwiZXhwIjoxNzU4OTA0ODUyLCJpc3MiOiJ1azIyMyJ9.TgJBVtlOOQ57mkfO9EHbttO_xFRh5ddSXQznM4sf-uXGM04oP1Xpxq1A8dv-L806",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 42\",\r\n  \"birthdate\": \"1992-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC1 - Pflichtfelder fehlen",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC1 Missing required field → 400 Bad Request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9SRUFEX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNDg1MiwiZXhwIjoxNzU4OTA0ODUyLCJpc3MiOiJ1azIyMyJ9.TgJBVtlOOQ57mkfO9EHbttO_xFRh5ddSXQznM4sf-uXGM04oP1Xpxq1A8dv-L806",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"birthdate\": \"1992-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC1 - Create Profile Ungültiges Geburtsdatum",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC1 Birthdate in future → 400 Bad Request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9SRUFEX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNDg1MiwiZXhwIjoxNzU4OTA0ODUyLCJpc3MiOiJ1azIyMyJ9.TgJBVtlOOQ57mkfO9EHbttO_xFRh5ddSXQznM4sf-uXGM04oP1Xpxq1A8dv-L806",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 42\",\r\n  \"birthdate\": \"3000-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC1 - Create Profile Alter nicht konsistent",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC1 Age not matching birthdate → 400 Bad Request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9SRUFEX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNDg1MiwiZXhwIjoxNzU4OTA0ODUyLCJpc3MiOiJ1azIyMyJ9.TgJBVtlOOQ57mkfO9EHbttO_xFRh5ddSXQznM4sf-uXGM04oP1Xpxq1A8dv-L806",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 42\",\r\n  \"birthdate\": \"3000-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UC2",
+					"item": [
+						{
+							"name": "UC2 – Own Profile lesen",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Get Own → 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"// Parse JSON\r",
+											"pm.test(\"Response ist JSON\", () => {\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// === Root-Level Strukturprüfung ===\r",
+											"pm.test(\"Root attributes vorhanden und korrekt\", () => {\r",
+											"    pm.expect(jsonData).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"user\").that.is.an(\"object\");\r",
+											"    pm.expect(jsonData).to.have.property(\"address\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"birthdate\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"profileImgUrl\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"age\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"ageConsistent\").that.is.a(\"boolean\");\r",
+											"});\r",
+											"\r",
+											"// === User Strukturprüfung ===\r",
+											"pm.test(\"User object structure korrekt\", () => {\r",
+											"    const user = jsonData.user;\r",
+											"    pm.expect(user).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"firstName\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"lastName\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"email\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"roles\").that.is.an(\"array\");\r",
+											"});\r",
+											"\r",
+											"// === Roles Strukturprüfung ===\r",
+											"pm.test(\"Roles structure korrekt\", () => {\r",
+											"    const roles = jsonData.user.roles;\r",
+											"    pm.expect(roles.length).to.be.greaterThan(0);\r",
+											"\r",
+											"    roles.forEach(role => {\r",
+											"        pm.expect(role).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"        pm.expect(role).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"        pm.expect(role).to.have.property(\"authorities\").that.is.an(\"array\");\r",
+											"\r",
+											"        // === Authorities Strukturprüfung ===\r",
+											"        role.authorities.forEach(auth => {\r",
+											"            pm.expect(auth).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"            pm.expect(auth).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"        });\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9SRUFEX09XTiJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifV0sInN1YiI6ImQ3ZTc4YWJlLTBiOGMtNGNiYS04NzZlLTQ0MTU4MTg1YjQ4MyIsImlhdCI6MTc1ODgwOTQ0MSwiZXhwIjoxNzU4OTA5NDQxLCJpc3MiOiJ1azIyMyJ9.saqDTfnyj-pci8wJLKZWPbQCRvqkcMW6AlsRLVdHuE8KpUo44Z5WtEGFvIQ1qm30",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC2 – Own Profile lesen ohne Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Get Own ohne Token → 403 Forbidden\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC2 – Profile deleted, re-fetch",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Deleted Profile → 400 Not Found\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODcxODIwOCwiZXhwIjoxNzU4ODE4MjA4LCJpc3MiOiJ1azIyMyJ9.gdAAFgXPQf_JYrcxhZAl5j6LVkY7gBgKcgtW63mIkWgW0e4uDbyHhZGne5fl9NpK",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC2 - Update own Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Update Own → 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"pm.test(\"UC2 Updated field gesetzt\", function () {\r",
+											"    pm.expect(pm.response.json().address).to.include(\"Berg\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 62\",\r\n  \"birthdate\": \"1992-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC2 - Update own Profile ohne Felder",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Update with empty address → 400 Bad Request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfTU9ESUZZX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9DUkVBVEVfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNzI5NSwiZXhwIjoxNzU4OTA3Mjk1LCJpc3MiOiJ1azIyMyJ9.-nUwD-vQF4vADeAj7XwNDIGBoszcz5nbgpWd__V7FgcXMOgFziDHihLwMF7psUkG",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC2 - Update own Profile nachdem gelöscht",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Update after delete → 404 Not Found\", function () {\r",
+											"    pm.response.to.have.status(404);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfTU9ESUZZX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9DUkVBVEVfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNzI5NSwiZXhwIjoxNzU4OTA3Mjk1LCJpc3MiOiJ1azIyMyJ9.-nUwD-vQF4vADeAj7XwNDIGBoszcz5nbgpWd__V7FgcXMOgFziDHihLwMF7psUkG",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC2 - Delete own Profile",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC2 Delete Own → 204 No Content\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"me"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UC3",
+					"item": [
+						{
+							"name": "UC3 – Admin liest Profil",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC3 Admin Get Any → 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"// Parse JSON\r",
+											"pm.test(\"Response ist JSON\", () => {\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// === Root-Level Struktur ===\r",
+											"pm.test(\"Root-Level Struktur korrekt\", () => {\r",
+											"    pm.expect(jsonData).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"user\").that.is.an(\"object\");\r",
+											"    pm.expect(jsonData).to.have.property(\"address\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"birthdate\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"profileImgUrl\").that.is.a(\"string\");\r",
+											"    pm.expect(jsonData).to.have.property(\"age\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"ageConsistent\").that.is.a(\"boolean\");\r",
+											"});\r",
+											"\r",
+											"// === User Objekt Struktur ===\r",
+											"pm.test(\"User Objekt korrekt aufgebaut\", () => {\r",
+											"    const user = jsonData.user;\r",
+											"    pm.expect(user).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"firstName\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"lastName\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"email\").that.is.a(\"string\");\r",
+											"    pm.expect(user).to.have.property(\"roles\").that.is.an(\"array\");\r",
+											"});\r",
+											"\r",
+											"// === Roles Struktur ===\r",
+											"pm.test(\"Roles Struktur korrekt\", () => {\r",
+											"    const roles = jsonData.user.roles;\r",
+											"    pm.expect(roles.length).to.be.greaterThan(0);\r",
+											"\r",
+											"    roles.forEach(role => {\r",
+											"        pm.expect(role).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"        pm.expect(role).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"        pm.expect(role).to.have.property(\"authorities\").that.is.an(\"array\");\r",
+											"\r",
+											"        // === Authorities Struktur ===\r",
+											"        role.authorities.forEach(auth => {\r",
+											"            pm.expect(auth).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"            pm.expect(auth).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"        });\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9SRUFEX09XTiJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfTU9ESUZZX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9DUkVBVEVfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwOTU2NCwiZXhwIjoxNzU4OTA5NTY0LCJpc3MiOiJ1azIyMyJ9.5p6dcXLcvekVBzeAx_zYheSqlPMQGCYTM65CEPlOv-_2y2CeQUPLWAvCagjhbJND",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC3 – Admin liest nicht existierendes Profil",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC3 Admin get non-existent profile → 400 Not Found\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC3 - Update Profile by ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC3 Admin Update Any → 200 OK\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJiYTgwNGNiOS1mYTE0LTQyYTUtYWZhZi1iZTQ4ODc0MmZjNTQiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0NSRUFURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfREVMRVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9PV04ifV0sImlhdCI6MTc1ODgwMjgzMCwiZXhwIjoxNzU4OTAyODMwLCJpc3MiOiJ1azIyMyJ9.QQbDsPkwOybiZBShQJ7imkdEv-VLkrbiXeHbLY04zLoLa4-s4SGfLn42mihrJZAX",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 52\",\r\n  \"birthdate\": \"1992-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC3 - Delete Profile by ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC3 Admin Delete Any → 204 No Content\", function () {\r",
+											"    pm.response.to.have.status(204);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJiYTgwNGNiOS1mYTE0LTQyYTUtYWZhZi1iZTQ4ODc0MmZjNTQiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0NSRUFURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfREVMRVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9PV04ifV0sImlhdCI6MTc1ODgwMjgzMCwiZXhwIjoxNzU4OTAyODMwLCJpc3MiOiJ1azIyMyJ9.QQbDsPkwOybiZBShQJ7imkdEv-VLkrbiXeHbLY04zLoLa4-s4SGfLn42mihrJZAX",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UC4",
+					"item": [
+						{
+							"name": "UC4 – Search Profiles als Admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC4 Search OK → 200 + JSON Array\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    const body = pm.response.json();\r",
+											"    pm.expect(body).to.have.property(\"content\");\r",
+											"    pm.expect(body.content).to.be.an(\"array\");\r",
+											"});\r",
+											"\r",
+											"// Parse JSON\r",
+											"pm.test(\"Response ist JSON\", () => {\r",
+											"    pm.response.to.be.json;\r",
+											"});\r",
+											"\r",
+											"const jsonData = pm.response.json();\r",
+											"\r",
+											"// === Grundstruktur ===\r",
+											"pm.test(\"Root-Level Struktur korrekt\", () => {\r",
+											"    pm.expect(jsonData).to.have.property(\"content\").that.is.an(\"array\");\r",
+											"    pm.expect(jsonData).to.have.property(\"pageable\").that.is.an(\"object\");\r",
+											"    pm.expect(jsonData).to.have.property(\"totalElements\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"totalPages\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"last\").that.is.a(\"boolean\");\r",
+											"    pm.expect(jsonData).to.have.property(\"size\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"number\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"sort\").that.is.an(\"object\");\r",
+											"    pm.expect(jsonData).to.have.property(\"numberOfElements\").that.is.a(\"number\");\r",
+											"    pm.expect(jsonData).to.have.property(\"first\").that.is.a(\"boolean\");\r",
+											"    pm.expect(jsonData).to.have.property(\"empty\").that.is.a(\"boolean\");\r",
+											"});\r",
+											"\r",
+											"// === Pageable Struktur ===\r",
+											"pm.test(\"Pageable Struktur korrekt\", () => {\r",
+											"    const pageable = jsonData.pageable;\r",
+											"    pm.expect(pageable).to.have.property(\"sort\").that.is.an(\"object\");\r",
+											"    pm.expect(pageable).to.have.property(\"offset\").that.is.a(\"number\");\r",
+											"    pm.expect(pageable).to.have.property(\"pageNumber\").that.is.a(\"number\");\r",
+											"    pm.expect(pageable).to.have.property(\"pageSize\").that.is.a(\"number\");\r",
+											"    pm.expect(pageable).to.have.property(\"unpaged\").that.is.a(\"boolean\");\r",
+											"    pm.expect(pageable).to.have.property(\"paged\").that.is.a(\"boolean\");\r",
+											"});\r",
+											"\r",
+											"// === Sort Struktur ===\r",
+											"pm.test(\"Sort Struktur korrekt\", () => {\r",
+											"    const sort = jsonData.sort;\r",
+											"    pm.expect(sort).to.have.property(\"empty\").that.is.a(\"boolean\");\r",
+											"    pm.expect(sort).to.have.property(\"sorted\").that.is.a(\"boolean\");\r",
+											"    pm.expect(sort).to.have.property(\"unsorted\").that.is.a(\"boolean\");\r",
+											"});\r",
+											"\r",
+											"// === Content Array Struktur ===\r",
+											"pm.test(\"Content Array Struktur korrekt\", () => {\r",
+											"    const content = jsonData.content;\r",
+											"    pm.expect(content.length).to.be.greaterThan(0);\r",
+											"\r",
+											"    content.forEach(item => {\r",
+											"        // Hauptobjekt\r",
+											"        pm.expect(item).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"        pm.expect(item).to.have.property(\"user\").that.is.an(\"object\");\r",
+											"        pm.expect(item).to.have.property(\"address\").that.is.a(\"string\");\r",
+											"        pm.expect(item).to.have.property(\"birthdate\").that.is.a(\"string\");\r",
+											"        pm.expect(item).to.have.property(\"profileImgUrl\").that.is.a(\"string\");\r",
+											"        pm.expect(item).to.have.property(\"age\").that.is.a(\"number\");\r",
+											"        pm.expect(item).to.have.property(\"ageConsistent\").that.is.a(\"boolean\");\r",
+											"\r",
+											"        // === User Struktur ===\r",
+											"        const user = item.user;\r",
+											"        pm.expect(user).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"        pm.expect(user).to.have.property(\"firstName\").that.is.a(\"string\");\r",
+											"        pm.expect(user).to.have.property(\"lastName\").that.is.a(\"string\");\r",
+											"        pm.expect(user).to.have.property(\"email\").that.is.a(\"string\");\r",
+											"        pm.expect(user).to.have.property(\"roles\").that.is.an(\"array\");\r",
+											"\r",
+											"        // === Roles Struktur ===\r",
+											"        user.roles.forEach(role => {\r",
+											"            pm.expect(role).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"            pm.expect(role).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"            pm.expect(role).to.have.property(\"authorities\").that.is.an(\"array\");\r",
+											"\r",
+											"            // === Authorities Struktur ===\r",
+											"            role.authorities.forEach(auth => {\r",
+											"                pm.expect(auth).to.have.property(\"id\").that.is.a(\"string\");\r",
+											"                pm.expect(auth).to.have.property(\"name\").that.is.a(\"string\");\r",
+											"            });\r",
+											"        });\r",
+											"    });\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9SRUFEX09XTiJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfTU9ESUZZX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9DUkVBVEVfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwOTU2NCwiZXhwIjoxNzU4OTA5NTY0LCJpc3MiOiJ1azIyMyJ9.5p6dcXLcvekVBzeAx_zYheSqlPMQGCYTM65CEPlOv-_2y2CeQUPLWAvCagjhbJND",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles?page=0&size=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC4 – Search Profiles mit Page -1",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC4 Search with invalid page → 400 Bad Request\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfTU9ESUZZX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9DUkVBVEVfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNzI5NSwiZXhwIjoxNzU4OTA3Mjk1LCJpc3MiOiJ1azIyMyJ9.-nUwD-vQF4vADeAj7XwNDIGBoszcz5nbgpWd__V7FgcXMOgFziDHihLwMF7psUkG",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles?page=-1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "-1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC4 – Search Profiles mit zu hoher Pages (keine Ergebnisse)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC4 Search returns empty content\", function () {\r",
+											"    const body = pm.response.json();\r",
+											"    pm.expect(body.content).to.be.an('array').that.is.empty;\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX1JFQURfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfTU9ESUZZX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9DUkVBVEVfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODgwNzI5NSwiZXhwIjoxNzU4OTA3Mjk1LCJpc3MiOiJ1azIyMyJ9.-nUwD-vQF4vADeAj7XwNDIGBoszcz5nbgpWd__V7FgcXMOgFziDHihLwMF7psUkG",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles?page=0&size=10000",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10000"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC4 – Search Profiles als User (Fail Case)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC4 Forbidden for normal User → 403\", function () {\r",
+											"    pm.response.to.have.status(403);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiI3YWFkNTc3MC02YjA0LTQyMjYtYjZiOC0yYTBiYjZiYWEwZjAiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9SRUFEX09XTiJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifV0sImlhdCI6MTc1ODgwMjQ4MCwiZXhwIjoxNzU4OTAyNDgwLCJpc3MiOiJ1azIyMyJ9.l_VhMOf6mxSD9ur2N5BwNnDt9_ZTxEQM6VEPHYM8r6uKYS--_20i57RyjVYSiajb",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles?page=0&size=10",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "size",
+											"value": "10"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "UC5",
+					"item": [
+						{
+							"name": "UC5 – Normaler User versucht fremdes Profil lesen",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC5 User cannot read other profile → 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJlODc3NjQ1Ni01M2ViLTQxYmMtOGJmYy1kM2U0NWJmNTg2MzQiLCJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9SRUFEX09XTiJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9PV04ifV0sImlhdCI6MTc1ODgwMTU5NiwiZXhwIjoxNzU4OTAxNTk2LCJpc3MiOiJ1azIyMyJ9.5P9jf9Le5JYaORDAm4wNSE0ccp_bPQYYeJkxVvbu6sP-80dTL2tKzTBr04tsILbC",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC5 - Normaler User versucht fremdes Profil updaten",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC5 User cannot update other profile → 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODcxODIwOCwiZXhwIjoxNzU4ODE4MjA4LCJpc3MiOiJ1azIyMyJ9.gdAAFgXPQf_JYrcxhZAl5j6LVkY7gBgKcgtW63mIkWgW0e4uDbyHhZGne5fl9NpK",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"address\": \"Bergstrasse 52\",\r\n  \"birthdate\": \"1992-03-15\",\r\n  \"profileImgUrl\": \"https://picsum.photos/200\",\r\n  \"age\": 33\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "UC5 - Normaler User versucht fremdes Profil zu löschen",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"UC5 User cannot delete other profile → 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzM4NCJ9.eyJhdXRob3JpdGllcyI6W3siYXV0aG9yaXR5IjoiVVNFUl9ERUxFVEVfT1dOIn0seyJhdXRob3JpdHkiOiJVU0VSX01PRElGWV9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9PV04ifSx7ImF1dGhvcml0eSI6IlVTRVJfQ1JFQVRFX0FMTCJ9LHsiYXV0aG9yaXR5IjoiVVNFUl9NT0RJRllfQUxMIn0seyJhdXRob3JpdHkiOiJVU0VSX0RFTEVURV9BTEwifSx7ImF1dGhvcml0eSI6IlVTRVJfUkVBRF9BTEwifV0sInN1YiI6ImJhODA0Y2I5LWZhMTQtNDJhNS1hZmFmLWJlNDg4NzQyZmM1NCIsImlhdCI6MTc1ODcxODIwOCwiZXhwIjoxNzU4ODE4MjA4LCJpc3MiOiJ1azIyMyJ9.gdAAFgXPQf_JYrcxhZAl5j6LVkY7gBgKcgtW63mIkWgW0e4uDbyHhZGne5fl9NpK",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{base_url}}/profiles/{{profileId}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"profiles",
+										"{{profileId}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://template.postman-echo.com"
+		}
+	]
+}
