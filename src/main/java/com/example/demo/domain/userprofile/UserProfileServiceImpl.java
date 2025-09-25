@@ -21,6 +21,8 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     private static final Logger logger = LogManager.getLogger(UserProfileServiceImpl.class);
 
+    private static final String PROFILE_NOT_FOUND = "Profile not found";
+
     private final UserProfileRepository userProfileRepository;
     private final UserProfileMapper userProfileMapper;
 
@@ -62,7 +64,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> {
                     logger.warn("UC2: Profile not found for {}", currentUser.getEmail());
-                    return new RuntimeException("Profile not found");
+                    return new RuntimeException(PROFILE_NOT_FOUND);
                 });
 
         return userProfileMapper.toDTO(profile);
@@ -78,7 +80,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> {
                     logger.warn("UC2: Profile not found for {} during update", currentUser.getEmail());
-                    return new RuntimeException("Profile not found");
+                    return new RuntimeException(PROFILE_NOT_FOUND);
                 });
 
         if (dto.getAddress() != null) profile.setAddress(dto.getAddress());
@@ -102,7 +104,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         UserProfile profile = userProfileRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> {
                     logger.warn("UC2: Profile not found for {} during deletion", currentUser.getEmail());
-                    return new RuntimeException("Profile not found");
+                    return new RuntimeException(PROFILE_NOT_FOUND);
                 });
 
         userProfileRepository.delete(profile);
@@ -117,7 +119,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         logger.info("UC3: User {} retrieving profileId={}", currentUser.getEmail(), profileId);
 
         UserProfile profile = userProfileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
         if (!isAdminOrOwner(currentUser, profile)) {
             throw new AccessDeniedException("Access denied");
@@ -134,7 +136,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         logger.info("UC4: User {} updating profileId={} with data={}", currentUser.getEmail(), profileId, dto);
 
         UserProfile profile = userProfileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
         if (!isAdminOrOwner(currentUser, profile)) {
             throw new AccessDeniedException("Access denied");
@@ -157,7 +159,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         logger.info("UC4: User {} deleting profileId={}", currentUser.getEmail(), profileId);
 
         UserProfile profile = userProfileRepository.findById(profileId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
         if (!isAdminOrOwner(currentUser, profile)) {
             throw new AccessDeniedException("Access denied");
@@ -200,7 +202,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public UserProfileDTO getProfileByUserId(UUID userId, User currentUser) {
         UserProfile profile = userProfileRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("Profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
 
         if (!isAdminOrOwner(currentUser, profile)) {
             throw new AccessDeniedException("Access denied");
