@@ -1,6 +1,5 @@
 package com.example.demo.domain.userprofile;
 
-import com.example.demo.core.security.permissionevaluators.UserPermissionEvaluator;
 import com.example.demo.domain.user.User;
 import com.example.demo.domain.user.UserDetailsImpl;
 import com.example.demo.domain.userprofile.dto.UserProfileDTO;
@@ -35,12 +34,9 @@ import java.util.UUID;
 public class UserProfileController {
 
     private final UserProfileService userProfileService;
-    private final UserPermissionEvaluator permissionEvaluator;
 
-    public UserProfileController(UserProfileService userProfileService,
-                                 UserPermissionEvaluator permissionEvaluator) {
+    public UserProfileController(UserProfileService userProfileService) {
         this.userProfileService = userProfileService;
-        this.permissionEvaluator = permissionEvaluator;
     }
 
     // ---- UC1: User erstellt eigenes Profil ----
