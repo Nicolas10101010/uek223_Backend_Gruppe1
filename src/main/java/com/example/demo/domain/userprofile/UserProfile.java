@@ -11,6 +11,17 @@ import lombok.experimental.Accessors;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/**
+ * UserProfile Entity - Erweiterte Benutzerinformationen
+ *
+ * Diese Entity repräsentiert das Benutzerprofil mit zusätzlichen Informationen
+ * wie Adresse, Geburtsdatum und Profilbild. Jeder User kann genau ein Profil haben.
+ *
+ * Komponenten:
+ * - JPA Entity mit OneToOne-Beziehung zu User
+ * - Lombok für Getter/Setter und Builder-Pattern
+ * - Validierung über Bean Validation in DTO-Schicht
+ */
 @Entity
 @Table(name = "user_profile")
 @NoArgsConstructor
@@ -19,6 +30,7 @@ import java.util.UUID;
 @Accessors(chain = true)
 public class UserProfile extends AbstractEntity {
 
+    // Bidirektionale OneToOne-Beziehung zu User - jeder User hat maximal ein Profil
     @OneToOne
     @JoinColumn(name = "id_user", referencedColumnName = "id", nullable = false, unique = true)
     private User user;
@@ -44,6 +56,10 @@ public class UserProfile extends AbstractEntity {
         this.age = age;
     }
 
+    /**
+     * Prüft ob das Profil dem angegebenen User gehört
+     * Wird für Autorisierungsprüfungen verwendet
+     */
     public boolean isOwnedBy(User currentUser) {
         return this.user != null && this.user.getId().equals(currentUser.getId());
     }
