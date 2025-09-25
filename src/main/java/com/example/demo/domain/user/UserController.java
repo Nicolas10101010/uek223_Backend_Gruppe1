@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Validated
 @RestController
-@RequestMapping("/user")
+@RequestMapping({"/user"})
 public class UserController {
 
   private final UserService userService;
