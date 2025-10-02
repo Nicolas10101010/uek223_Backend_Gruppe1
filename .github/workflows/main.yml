@@ -7,7 +7,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
+    - name: Executing remote ssh commands using password
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -17,3 +17,13 @@ jobs:
         script: echo “Hello World”
                 run ./run.sh
   
+  sonarqube:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - name: SonarQube Scan
+      uses: sonarsource/sonarcloud-github-action@v3 
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
