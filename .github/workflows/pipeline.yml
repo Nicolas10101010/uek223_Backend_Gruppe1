@@ -42,10 +42,10 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
     
     - name: Build Docker Image
-      run: docker build -t nicolas10101010/backend:latest .
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/backend:latest .
     
     - name: Push Docker Image
-      run: docker push nicolas10101010/backend:latest
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
   deploy:
     needs: build-and-push
@@ -62,3 +62,10 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 2222
         script: ./deploy.sh
+        
+  wish-good-weekend:
+   needs: deploy
+   runs-on: ubuntu-latest
+   steps:
+   - name: Wishes good Weekend
+     run: ./run.sh
