@@ -61,11 +61,15 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: 2222
-        script: ./deploy.sh
+        script: |
+         chmod +x ./deploy.sh
+         ./deploy.sh
         
   wish-good-weekend:
    needs: deploy
    runs-on: ubuntu-latest
    steps:
    - name: Wishes good Weekend
-     run: ./run.sh
+     run: |
+      chmod +x ./run.sh
+      ./run.sh
