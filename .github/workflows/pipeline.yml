@@ -62,6 +62,8 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 2222
         script: |
+          docker compose down          
+          docker image prune -f          
           chmod +x ./deploy.sh
           ./deploy.sh
 
