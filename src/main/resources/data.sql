@@ -14,9 +14,11 @@ VALUES
     ('66666666-6666-6666-6666-666666666666', 'felix@example.com', 'Felix', 'Rossi', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6'),
     ('77777777-7777-7777-7777-777777777777', 'hannah@example.com', 'Hannah', 'Keller', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6'),
     ('88888888-8888-8888-8888-888888888888', 'isaac@example.com', 'Isaac', 'Brown', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6'),
-    ('99999999-9999-9999-9999-999999999999', 'peter@example.com', 'Peter', 'Keller', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6')
+    ('99999999-9999-9999-9999-999999999999', 'peter@example.com', 'Peter', 'Muller', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6'),
+    ('10000000-0000-0000-0000-000000000000', 'hans@example.com', 'Hans', 'Keller', '$2a$10$TM3PAYG3b.H98cbRrHqWa.BM7YyCqV92e/kUTBfj85AjayxGZU7d6')
 
-ON CONFLICT DO NOTHING;
+
+    ON CONFLICT DO NOTHING;
 
 -- ======================================================================
 -- ROLEN
@@ -40,8 +42,9 @@ values ('ba804cb9-fa14-42a5-afaf-be488742fc54', 'ab505c92-7280-49fd-a7de-258e618
        ('66666666-6666-6666-6666-666666666666', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02'),
        ('77777777-7777-7777-7777-777777777777', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02'),
        ('88888888-8888-8888-8888-888888888888', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02'),
-       ('99999999-9999-9999-9999-999999999999', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02')
-    ON CONFLICT DO NOTHING;
+       ('99999999-9999-9999-9999-999999999999', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02'),
+       ('10000000-0000-0000-0000-000000000000', 'c6aee32d-8c35-4481-8b3e-a876a39b0c02')
+ON CONFLICT DO NOTHING;
 
 -- ======================================================================
 -- PROFILE FÜR BENUTZER
@@ -57,8 +60,9 @@ VALUES
     ('87777777-7777-7777-7777-777777777777','66666666-6666-6666-6666-666666666666','Via Roma 88, Milano','1994-12-05','https://i.pinimg.com/736x/50/59/75/505975a0281b2d860947663d7371cbf8.jpg',30),
     ('88888888-8888-8888-8888-888888888888','77777777-7777-7777-7777-777777777777','Bahnhofstrasse 10, Wien','2000-06-18','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNmQAtdDAxlvvgpf9JzVvVyhoyxpeKW1EhCA&s',24),
     ('89999999-9999-9999-9999-999999999999','88888888-8888-8888-8888-888888888888','Broadway 55, Los Angeles','1985-04-09','https://miro.medium.com/1*3ArAncaR62MGyh-95ufbQw@2x.jpeg',40),
-    ('99999999-9999-9999-9999-999999999999','99999999-9999-9999-9999-999999999999','Street 67, Mexiko','1980-06-10','https://i.kym-cdn.com/photos/images/original/002/092/931/f35.jpg',45)
-ON CONFLICT DO NOTHING;
+    ('90000000-0000-0000-0000-000000000000','99999999-9999-9999-9999-999999999999','Street 67, Oslo','1980-06-10','https://i.kym-cdn.com/photos/images/original/002/092/931/f35.jpg',45),
+    ('91111111-1111-1111-1111-111111111111','00000000-0000-0000-0000-000000000001','Potato Street 31, Barbie Land','2000-07-22','https://i.pinimg.com/736x/46/a2/23/46a22343ab748c1e9c50432131281bbb.jpg',25)
+    ON CONFLICT DO NOTHING;
 
 -- ======================================================================
 -- BERECHTIGUNGEN (AUTHORITIES)
