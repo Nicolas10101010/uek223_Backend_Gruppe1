@@ -57,7 +57,7 @@ VALUES
     ('87777777-7777-7777-7777-777777777777','66666666-6666-6666-6666-666666666666','Via Roma 88, Milano','1994-12-05','https://i.pinimg.com/736x/50/59/75/505975a0281b2d860947663d7371cbf8.jpg',30),
     ('88888888-8888-8888-8888-888888888888','77777777-7777-7777-7777-777777777777','Bahnhofstrasse 10, Wien','2000-06-18','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNmQAtdDAxlvvgpf9JzVvVyhoyxpeKW1EhCA&s',24),
     ('89999999-9999-9999-9999-999999999999','88888888-8888-8888-8888-888888888888','Broadway 55, Los Angeles','1985-04-09','https://miro.medium.com/1*3ArAncaR62MGyh-95ufbQw@2x.jpeg',40),
-    ('99999999-9999-9999-9999-999999999999','99999999-9999-9999-9999-999999999999','Street 67, Mexiko','1980-06-10','https://scontent-zrh1-1.xx.fbcdn.net/v/t39.30808-6/480467506_1064076152429162_6161460340649194416_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=KLdHxKpHrv8Q7kNvwHrrAbi&_nc_oc=Adkq7mwQeeiTMbhGuOmMkeLuSm3xGuPyyorWdDS3VwiZlShGceAMNf775TILt-3iD-4&_nc_zt=23&_nc_ht=scontent-zrh1-1.xx&_nc_gid=SJrPeM81-nKtNE19OlYawg&oh=00_AfcruE24nMWm32x0XxIJrvcfn1VWlFO-d-vltYcO58sqxg&oe=68E591F6',45)
+    ('99999999-9999-9999-9999-999999999999','99999999-9999-9999-9999-999999999999','Street 67, Mexiko','1980-06-10','https://i.kym-cdn.com/photos/images/original/002/092/931/f35.jpg',45)
 ON CONFLICT DO NOTHING;
 
 -- ======================================================================
