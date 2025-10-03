@@ -61,7 +61,7 @@ VALUES
     ('88888888-8888-8888-8888-888888888888','77777777-7777-7777-7777-777777777777','Bahnhofstrasse 10, Wien','2000-06-18','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNmQAtdDAxlvvgpf9JzVvVyhoyxpeKW1EhCA&s',24),
     ('89999999-9999-9999-9999-999999999999','88888888-8888-8888-8888-888888888888','Broadway 55, Los Angeles','1985-04-09','https://miro.medium.com/1*3ArAncaR62MGyh-95ufbQw@2x.jpeg',40),
     ('90000000-0000-0000-0000-000000000000','99999999-9999-9999-9999-999999999999','Street 67, Oslo','1980-06-10','https://i.kym-cdn.com/photos/images/original/002/092/931/f35.jpg',45),
-    ('91111111-1111-1111-1111-111111111111','00000000-0000-0000-0000-000000000001','Potato Street 31, Barbie Land','2000-07-22','https://i.pinimg.com/736x/46/a2/23/46a22343ab748c1e9c50432131281bbb.jpg',25)
+    ('91111111-1111-1111-1111-111111111111','10000000-0000-0000-0000-000000000000','Potato Street 31, Barbie Land','2000-07-22','https://i.pinimg.com/736x/46/a2/23/46a22343ab748c1e9c50432131281bbb.jpg',25)
     ON CONFLICT DO NOTHING;
 
 -- ======================================================================
