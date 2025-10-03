@@ -51,9 +51,6 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-    
     - name: Deploy to Server
       uses: appleboy/ssh-action@master
       with:
@@ -62,11 +59,11 @@ jobs:
         password: ${{ secrets.PASSWORD }}
         port: 2222
         script: |
-          docker compose down          
-          docker image prune -f          
-          chmod +x ./deploy.sh
-          ./deploy.sh
-
+          docker compose down --remove-orphans          
+          docker compose pull          
+          docker compose up -d          
+          docker image prune -f
+          
   wish-good-weekend:
     needs: deploy
     runs-on: ubuntu-latest
